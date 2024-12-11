@@ -39,7 +39,7 @@ export const generateGuardedPrisma = async (options: GeneratorOptions) => {
     import { ProcedureBuilder } from '@trpc/server'
     import z from 'zod';
     import * as Schema from './schema';
-    import { shield } from 'prisma-security-rules'
+    import { withSecurityRules } from 'prisma-security-rules'
     import { prisma } from '${relativeClientPathToOutput}'
     import { Context } from '${relativeContextPathToOutput}'
 
@@ -56,7 +56,7 @@ export const generateGuardedPrisma = async (options: GeneratorOptions) => {
             ${actions.map(action => `
               ${action}: procedure
                 .input(Schema.${model.name}${toCapitlize(action)}ArgsSchema)
-                .query(({ ctx, input }) => shield(prisma, rules, ctx).${toUncapitlize(model.name)}.${action}(input)),
+                .query(({ ctx, input }) => withSecurityRules(prisma, rules, ctx).${toUncapitlize(model.name)}.${action}(input)),
             `).join('')}
           },
         `;

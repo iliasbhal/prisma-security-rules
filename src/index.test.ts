@@ -1,13 +1,4 @@
-import { where } from '../example/rules/Users'
-import { shield } from './index'
-
-const mockPrismaClient = {
-  user: {
-    findMany(...args) {
-
-    }
-  }
-}
+import { withSecurityRules } from './index';
 
 describe('Example', () => {
 
@@ -30,7 +21,7 @@ describe('Example', () => {
       }
     }
 
-    await shield(client, mockRules, context).user.findMany({
+    await withSecurityRules(client, mockRules, context).user.findMany({
       where: {
         active: true
       }

@@ -1,7 +1,7 @@
 import { ProcedureBuilder } from "@trpc/server";
 import z from "zod";
 import * as Schema from "./schema";
-import { shield } from "prisma-security-rules";
+import { withSecurityRules } from "prisma-security-rules";
 import { prisma } from "../../client";
 import { Context } from "../../context";
 
@@ -21,13 +21,13 @@ export const createTrpcQueries = <P extends ProcedureBuilder<any>>(
     findMany: procedure
       .input(Schema.UsersFindManyArgsSchema)
       .query(({ ctx, input }) =>
-        shield(prisma, rules, ctx).users.findMany(input),
+        withSecurityRules(prisma, rules, ctx).users.findMany(input),
       ),
 
     findUnique: procedure
       .input(Schema.UsersFindUniqueArgsSchema)
       .query(({ ctx, input }) =>
-        shield(prisma, rules, ctx).users.findUnique(input),
+        withSecurityRules(prisma, rules, ctx).users.findUnique(input),
       ),
   },
 
@@ -35,13 +35,13 @@ export const createTrpcQueries = <P extends ProcedureBuilder<any>>(
     findMany: procedure
       .input(Schema.PostFindManyArgsSchema)
       .query(({ ctx, input }) =>
-        shield(prisma, rules, ctx).post.findMany(input),
+        withSecurityRules(prisma, rules, ctx).post.findMany(input),
       ),
 
     findUnique: procedure
       .input(Schema.PostFindUniqueArgsSchema)
       .query(({ ctx, input }) =>
-        shield(prisma, rules, ctx).post.findUnique(input),
+        withSecurityRules(prisma, rules, ctx).post.findUnique(input),
       ),
   },
 
@@ -49,13 +49,13 @@ export const createTrpcQueries = <P extends ProcedureBuilder<any>>(
     findMany: procedure
       .input(Schema.ReactionFindManyArgsSchema)
       .query(({ ctx, input }) =>
-        shield(prisma, rules, ctx).reaction.findMany(input),
+        withSecurityRules(prisma, rules, ctx).reaction.findMany(input),
       ),
 
     findUnique: procedure
       .input(Schema.ReactionFindUniqueArgsSchema)
       .query(({ ctx, input }) =>
-        shield(prisma, rules, ctx).reaction.findUnique(input),
+        withSecurityRules(prisma, rules, ctx).reaction.findUnique(input),
       ),
   },
 
@@ -63,13 +63,13 @@ export const createTrpcQueries = <P extends ProcedureBuilder<any>>(
     findMany: procedure
       .input(Schema.MentionFindManyArgsSchema)
       .query(({ ctx, input }) =>
-        shield(prisma, rules, ctx).mention.findMany(input),
+        withSecurityRules(prisma, rules, ctx).mention.findMany(input),
       ),
 
     findUnique: procedure
       .input(Schema.MentionFindUniqueArgsSchema)
       .query(({ ctx, input }) =>
-        shield(prisma, rules, ctx).mention.findUnique(input),
+        withSecurityRules(prisma, rules, ctx).mention.findUnique(input),
       ),
   },
 });

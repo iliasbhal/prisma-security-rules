@@ -1,6 +1,6 @@
 import { toAwaitedRecord } from './utils/toAwaitedRecord';
 
-export const shield = <Client extends object>(client: Client, rules: Record<keyof Client, any>, ctx: Parameters<typeof createQueryGuards>[0]): Client => {
+export const withSecurityRules = <Client extends object>(client: Client, rules: Record<string, any>, ctx: Parameters<typeof createQueryGuards>[0]): Client => {
   const guards = createQueryGuards(ctx, rules);
 
   return new Proxy(client, {
