@@ -1,11 +1,9 @@
-import { ProcedureBuilder } from "@trpc/server";
 import z from "zod";
-import * as Schema from "./schema";
 import { withSecurityRules } from "prisma-security-rules";
 import { prisma } from "../../client";
 import { Context } from "../../context";
-
 import * as rules from "../../rules";
+import * as Schema from "./schema";
 
 export type ModelName = Capitalize<
   Exclude<keyof typeof prisma, `$${string}` | symbol | number>
@@ -13,6 +11,12 @@ export type ModelName = Capitalize<
 export type WhereRule<Name extends ModelName> = (
   ctx: Context,
 ) => z.infer<(typeof Schema)[`${Name}WhereInputSchema`]>;
+
+export const secureClient = (ctx: Context) => {
+  return withSecurityRules(prisma, rules, ctx);
+};
+
+import { ProcedureBuilder } from "@trpc/server";
 
 export const createTrpcQueries = <P extends ProcedureBuilder<any>>(
   procedure: P,
