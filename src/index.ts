@@ -25,7 +25,6 @@ export const shield = <Client extends object>(client: Client, rules: Record<keyo
                 // @ts-ignore
                 const modelClient = client[modelName];
 
-                console.log('sanitizedArgs', sanitizedArgs)
                 // @ts-ignore
                 const result = await modelClient.findMany(sanitizedArgs);
                 return result;
@@ -51,10 +50,6 @@ export const createQueryGuards = <ModelName extends string>(ctx: any, rules: Rec
         where: modelRules?.where?.(ctx),
       })
 
-      console.log('modelRules', modelRules)
-
-      console.log('input', input);
-      console.log('additonalRules', additonalRules);
       return {
         ...input.args,
         where: {
