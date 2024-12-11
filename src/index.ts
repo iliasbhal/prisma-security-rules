@@ -1,6 +1,6 @@
 import { toAwaitedRecord } from './utils/toAwaitedRecord';
 
-export const shield = <Client extends object>(client: Client, rules: Record<string, any>, ctx: Parameters<typeof createQueryGuards>[0]): Client => {
+export const shield = <Client extends object>(client: Client, rules: Record<keyof Client, any>, ctx: Parameters<typeof createQueryGuards>[0]): Client => {
   const guards = createQueryGuards(ctx, rules);
 
   return new Proxy(client, {
@@ -25,6 +25,7 @@ export const shield = <Client extends object>(client: Client, rules: Record<stri
                 // @ts-ignore
                 const modelClient = client[modelName];
 
+                console.log('sanitizedArgs', sanitizedArgs)
                 // @ts-ignore
                 const result = await modelClient.findMany(sanitizedArgs);
                 return result;
@@ -50,6 +51,10 @@ export const createQueryGuards = <ModelName extends string>(ctx: any, rules: Rec
         where: modelRules?.where?.(ctx),
       })
 
+      console.log('modelRules', modelRules)
+
+      console.log('input', input);
+      console.log('additonalRules', additonalRules);
       return {
         ...input.args,
         where: {
