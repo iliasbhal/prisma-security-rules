@@ -1,8 +1,7 @@
 import { initTRPC } from "@trpc/server";
+import { Context } from './context'
 
-export type Context = {
-  requestId: string;
-}
+export { Context } from './context'
 
 export type Metadata = {}
 

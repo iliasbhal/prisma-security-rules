@@ -1,5 +1,6 @@
 import { generatorHandler, GeneratorManifest, GeneratorOptions } from "@prisma/generator-helper";
 import { generateGuardedPrisma } from './lib/generatedGuardedPrisma';
+import { generateTrpcProcedures } from './lib/generateTrpcProcedures';
 import { generateRuleFiles } from './lib/generateRuleFiles';
 import { generatePrismaZodSchema } from './lib/generatePrismaZodSchema'
 
@@ -15,6 +16,7 @@ export default generatorHandler({
     await generatePrismaZodSchema(options);
     await generateRuleFiles(options);
     await generateGuardedPrisma(options);
+    await generateTrpcProcedures(options)
   }
 });
 

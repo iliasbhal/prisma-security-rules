@@ -5,9 +5,7 @@ import z from 'zod';
 import { GeneratorOptions } from "@prisma/generator-helper";
 import { writeFileTypescript } from '../utils/writeFileTypescript'
 import { getRelativePathFromOutput, getAbsolutePath } from '../utils/getRelativePathFromOutput';
-
-const toCapitlize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
-const toUncapitlize = (str: string) => str.charAt(0).toLowerCase() + str.slice(1);
+import { toCapitlize, toUncapitlize } from '../utils/string'
 
 export const generatorConfigType = z.object({
   prismaClientPath: z.string({ required_error: 'prismaClientPath is required' }),
@@ -30,8 +28,6 @@ export const getPaths = (options: GeneratorOptions) => {
 
     schemaFolderPath: path.resolve(options.generator.output?.value, 'schema'),
     outputFolderPath: path.resolve(options.generator.output?.value),
-
-
   };
 }
 
@@ -63,8 +59,6 @@ export const generateGuardedPrisma = async (options: GeneratorOptions) => {
     export const secureClient = (ctx: Context) => {
       return withSecurityRules(prisma, rules, ctx)
     }
-
-    ${!!relativeTrpcProcedurePath ? await generateTrpcRouter(options) : ''}
   `;
 
   await fs.ensureDir(outputFolderPath);
