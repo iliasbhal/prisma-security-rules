@@ -1,6 +1,6 @@
 {
   "name": "prisma-security-rules",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "index.js",
   "author": "ilias.bhal@gmail.com",
   "license": "MIT",
@@ -8,9 +8,9 @@
     "prisma-security-rules": "./bin.ts"
   },
   "scripts": {
-    "prisma:reset": "prisma migrate reset --schema ./example/schema.prisma",
-    "prisma:migrate": "prisma migrate dev --schema ./example/schema.prisma",
-    "prisma:generate": "prisma generate --schema ./example/schema.prisma",
+    "prisma:reset": "yarn sync && prisma migrate reset --schema ./example/schema.prisma",
+    "prisma:migrate": "yarn sync && prisma migrate dev --schema ./example/schema.prisma",
+    "prisma:generate": "yarn sync && prisma generate --schema ./example/schema.prisma",
     "docker": "docker-compose --env-file .env -f ./docker/compose.yml up --build",
     "sync": "npm link && npm link prisma-security-rules",
     "scripts": "tsx  ./scripts/index.ts",

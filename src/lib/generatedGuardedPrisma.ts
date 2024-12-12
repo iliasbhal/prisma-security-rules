@@ -13,10 +13,8 @@ export const generatorConfigType = z.object({
   prismaClientPath: z.string({ required_error: 'prismaClientPath is required' }),
   contextTypePath: z.string({ required_error: 'contextTypePath is required' }),
   rulesfolderPath: z.string({ required_error: 'rulesfolderPath is required' }),
-})
 
-export const generatorAPIType = z.object({
-  generateTrpcRouter: z.literal('true').or(z.literal('false')).optional(),
+  trpcProcedurePath: z.string().optional(),
 })
 
 export const getPaths = (options: GeneratorOptions) => {
@@ -26,19 +24,24 @@ export const getPaths = (options: GeneratorOptions) => {
     relativeClientPathToOutput: getRelativePathFromOutput(options, generatorConfig.prismaClientPath),
     relativeContextPathToOutput: getRelativePathFromOutput(options, generatorConfig.contextTypePath),
     relativeRulesfolderPath: getRelativePathFromOutput(options, generatorConfig.rulesfolderPath),
+    relativeTrpcProcedurePath: getRelativePathFromOutput(options, generatorConfig.trpcProcedurePath),
 
     absoluteRulesFolderPath: getAbsolutePath(options, generatorConfig.rulesfolderPath),
 
     schemaFolderPath: path.resolve(options.generator.output?.value, 'schema'),
-    outputFolderPath: path.resolve(options.generator.output?.value)
+    outputFolderPath: path.resolve(options.generator.output?.value),
+
+
   };
 }
 
 export const generateGuardedPrisma = async (options: GeneratorOptions) => {
-  const { relativeClientPathToOutput, relativeContextPathToOutput, outputFolderPath } = getPaths(options);
-
-  console.log('options.generator.config', options.generator.config);
-  const config = generatorAPIType.parse(options.generator.config);
+  const {
+    relativeClientPathToOutput,
+    relativeContextPathToOutput,
+    outputFolderPath,
+    relativeTrpcProcedurePath
+  } = getPaths(options);
 
   const generated = `
     // ---------------------------------------------- //
@@ -52,6 +55,8 @@ export const generateGuardedPrisma = async (options: GeneratorOptions) => {
     import * as rules from '../../rules'
     import * as Schema from './schema';
 
+    export * as Schema from './schema';
+
     ${'export type ModelName = Capitalize<Exclude<keyof typeof prisma, `$${ string }` | symbol | number>>;'}
     ${'export type WhereRule<Name extends ModelName> = (ctx: Context) => z.infer<typeof Schema[`${ Name }WhereInputSchema`]>'}
 
@@ -59,31 +64,34 @@ export const generateGuardedPrisma = async (options: GeneratorOptions) => {
       return withSecurityRules(prisma, rules, ctx)
     }
 
-    ${config.generateTrpcRouter == 'true' ? await generateTrpcRouter(options) : ''}
+    ${!!relativeTrpcProcedurePath ? await generateTrpcRouter(options) : ''}
   `;
 
+  console.log('generated', generated);
   await fs.ensureDir(outputFolderPath);
   const outputIndexPath = path.resolve(outputFolderPath, 'index.ts');
   await writeFileTypescript(outputIndexPath, generated);
 }
 
 export const generateTrpcRouter = async (options: GeneratorOptions) => {
+  const { relativeTrpcProcedurePath } = getPaths(options);
+
   return `
-      import { ProcedureBuilder } from '@trpc/server'
-  
-      export const createTrpcQueries = <P extends ProcedureBuilder<any>>(procedure: P) => ({
-        ${options.dmmf.datamodel.models.map(model => {
+    import { procedure } from '${relativeTrpcProcedurePath}'
+
+    export const router = {
+      ${options.dmmf.datamodel.models.map(model => {
     const actions = ['findMany', 'findUnique'];
     return `
-            ${toUncapitlize(model.name)}: {
-              ${actions.map(action => `
-                ${action}: procedure
-                  .input(Schema.${model.name}${toCapitlize(action)}ArgsSchema)
-                  .query(({ ctx, input }) => withSecurityRules(prisma, rules, ctx).${toUncapitlize(model.name)}.${action}(input)),
-              `).join('')}
-            },
-          `;
+          ${toUncapitlize(model.name)}:{
+            ${actions.map(action => `
+              ${action}: procedure
+                .input(Schema.${model.name}${toCapitlize(action)}ArgsSchema)
+                .query(({ ctx, input }) => withSecurityRules(prisma, rules, ctx).${toUncapitlize(model.name)}.${action}(input)),
+            `).join('')}
+          },
+        `;
   }).join('\n')}
-      });
-    `;
+    };
+  `;
 }

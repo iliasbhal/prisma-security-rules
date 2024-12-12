@@ -9,6 +9,8 @@ import { Context } from "../../context";
 import * as rules from "../../rules";
 import * as Schema from "./schema";
 
+export * as Schema from "./schema";
+
 export type ModelName = Capitalize<
   Exclude<keyof typeof prisma, `$${string}` | symbol | number>
 >;
@@ -20,11 +22,9 @@ export const secureClient = (ctx: Context) => {
   return withSecurityRules(prisma, rules, ctx);
 };
 
-import { ProcedureBuilder } from "@trpc/server";
+import { procedure } from "../../trpc";
 
-export const createTrpcQueries = <P extends ProcedureBuilder<any>>(
-  procedure: P,
-) => ({
+export const router = {
   users: {
     findMany: procedure
       .input(Schema.UsersFindManyArgsSchema)
@@ -80,4 +80,4 @@ export const createTrpcQueries = <P extends ProcedureBuilder<any>>(
         withSecurityRules(prisma, rules, ctx).mention.findUnique(input),
       ),
   },
-});
+};

@@ -9,12 +9,12 @@ generator client {
 }
 
 generator rules {
-  provider           = "prisma-security-rules"
-  output             = "./generated/security-rules"
-  prismaClientPath   = "./client"
-  contextTypePath    = "./context"
-  rulesfolderPath    = "./rules"
-  generateTrpcRouter = true
+  provider          = "prisma-security-rules"
+  output            = "./generated/security-rules"
+  prismaClientPath  = "./client"
+  contextTypePath   = "./context"
+  rulesfolderPath   = "./rules"
+  trpcProcedurePath = "./trpc"
 }
 
 model Users {
