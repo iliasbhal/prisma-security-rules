@@ -28,7 +28,7 @@ export const generateTrpcProcedures = async (options: GeneratorOptions) => {
             ${actions.map(action => `
               ${action}: procedure
                 .input(Schema.${model.name}${toCapitlize(action)}ArgsSchema)
-                .query(({ ctx, input }) => secureClient(prisma, rules, ctx).${toUncapitlize(model.name)}.${action}(input)),
+                .query(({ ctx, input }) => secureClient(ctx).${toUncapitlize(model.name)}.${action}(input)),
             `).join('')}
         }),
         `;
