@@ -22,10 +22,10 @@ export const secureClient = (ctx: Context) => {
   return withSecurityRules(prisma, rules, ctx);
 };
 
-import { procedure } from "../../trpc";
+import { trpc, procedure } from "../../trpc";
 
-export const router = {
-  users: {
+export const router = trpc.router({
+  users: trpc.router({
     findMany: procedure
       .input(Schema.UsersFindManyArgsSchema)
       .query(({ ctx, input }) =>
@@ -37,9 +37,9 @@ export const router = {
       .query(({ ctx, input }) =>
         withSecurityRules(prisma, rules, ctx).users.findUnique(input),
       ),
-  },
+  }),
 
-  post: {
+  post: trpc.router({
     findMany: procedure
       .input(Schema.PostFindManyArgsSchema)
       .query(({ ctx, input }) =>
@@ -51,9 +51,9 @@ export const router = {
       .query(({ ctx, input }) =>
         withSecurityRules(prisma, rules, ctx).post.findUnique(input),
       ),
-  },
+  }),
 
-  reaction: {
+  reaction: trpc.router({
     findMany: procedure
       .input(Schema.ReactionFindManyArgsSchema)
       .query(({ ctx, input }) =>
@@ -65,9 +65,9 @@ export const router = {
       .query(({ ctx, input }) =>
         withSecurityRules(prisma, rules, ctx).reaction.findUnique(input),
       ),
-  },
+  }),
 
-  mention: {
+  mention: trpc.router({
     findMany: procedure
       .input(Schema.MentionFindManyArgsSchema)
       .query(({ ctx, input }) =>
@@ -79,5 +79,5 @@ export const router = {
       .query(({ ctx, input }) =>
         withSecurityRules(prisma, rules, ctx).mention.findUnique(input),
       ),
-  },
-};
+  }),
+});

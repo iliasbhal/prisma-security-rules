@@ -67,7 +67,6 @@ export const generateGuardedPrisma = async (options: GeneratorOptions) => {
     ${!!relativeTrpcProcedurePath ? await generateTrpcRouter(options) : ''}
   `;
 
-  console.log('generated', generated);
   await fs.ensureDir(outputFolderPath);
   const outputIndexPath = path.resolve(outputFolderPath, 'index.ts');
   await writeFileTypescript(outputIndexPath, generated);
@@ -77,21 +76,22 @@ export const generateTrpcRouter = async (options: GeneratorOptions) => {
   const { relativeTrpcProcedurePath } = getPaths(options);
 
   return `
-    import { procedure } from '${relativeTrpcProcedurePath}'
+    import { trpc, procedure } from '${relativeTrpcProcedurePath}'
 
-    export const router = {
+    export const router = trpc.router({
       ${options.dmmf.datamodel.models.map(model => {
     const actions = ['findMany', 'findUnique'];
     return `
-          ${toUncapitlize(model.name)}:{
+          ${toUncapitlize(model.name)}: trpc.router({
+          
             ${actions.map(action => `
               ${action}: procedure
                 .input(Schema.${model.name}${toCapitlize(action)}ArgsSchema)
                 .query(({ ctx, input }) => withSecurityRules(prisma, rules, ctx).${toUncapitlize(model.name)}.${action}(input)),
             `).join('')}
-          },
+        }),
         `;
   }).join('\n')}
-    };
+    });
   `;
 }
