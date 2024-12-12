@@ -6,56 +6,40 @@ export const router = trpc.router({
   users: trpc.router({
     findMany: procedure
       .input(Schema.UsersFindManyArgsSchema)
-      .query(({ ctx, input }) =>
-        secureClient(prisma, rules, ctx).users.findMany(input),
-      ),
+      .query(({ ctx, input }) => secureClient(ctx).users.findMany(input)),
 
     findUnique: procedure
       .input(Schema.UsersFindUniqueArgsSchema)
-      .query(({ ctx, input }) =>
-        secureClient(prisma, rules, ctx).users.findUnique(input),
-      ),
+      .query(({ ctx, input }) => secureClient(ctx).users.findUnique(input)),
   }),
 
   post: trpc.router({
     findMany: procedure
       .input(Schema.PostFindManyArgsSchema)
-      .query(({ ctx, input }) =>
-        secureClient(prisma, rules, ctx).post.findMany(input),
-      ),
+      .query(({ ctx, input }) => secureClient(ctx).post.findMany(input)),
 
     findUnique: procedure
       .input(Schema.PostFindUniqueArgsSchema)
-      .query(({ ctx, input }) =>
-        secureClient(prisma, rules, ctx).post.findUnique(input),
-      ),
+      .query(({ ctx, input }) => secureClient(ctx).post.findUnique(input)),
   }),
 
   reaction: trpc.router({
     findMany: procedure
       .input(Schema.ReactionFindManyArgsSchema)
-      .query(({ ctx, input }) =>
-        secureClient(prisma, rules, ctx).reaction.findMany(input),
-      ),
+      .query(({ ctx, input }) => secureClient(ctx).reaction.findMany(input)),
 
     findUnique: procedure
       .input(Schema.ReactionFindUniqueArgsSchema)
-      .query(({ ctx, input }) =>
-        secureClient(prisma, rules, ctx).reaction.findUnique(input),
-      ),
+      .query(({ ctx, input }) => secureClient(ctx).reaction.findUnique(input)),
   }),
 
   mention: trpc.router({
     findMany: procedure
       .input(Schema.MentionFindManyArgsSchema)
-      .query(({ ctx, input }) =>
-        secureClient(prisma, rules, ctx).mention.findMany(input),
-      ),
+      .query(({ ctx, input }) => secureClient(ctx).mention.findMany(input)),
 
     findUnique: procedure
       .input(Schema.MentionFindUniqueArgsSchema)
-      .query(({ ctx, input }) =>
-        secureClient(prisma, rules, ctx).mention.findUnique(input),
-      ),
+      .query(({ ctx, input }) => secureClient(ctx).mention.findUnique(input)),
   }),
 });
