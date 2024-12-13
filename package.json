@@ -1,9 +1,10 @@
 {
   "name": "prisma-security-rules",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "main": "index.js",
   "author": "ilias.bhal@gmail.com",
   "license": "MIT",
+  "types": "./src",
   "bin": {
     "prisma-security-rules": "./bin.ts"
   },

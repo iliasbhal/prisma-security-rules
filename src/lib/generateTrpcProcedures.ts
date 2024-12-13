@@ -14,14 +14,31 @@ export const generateTrpcProcedures = async (options: GeneratorOptions) => {
     return;
   }
 
+  const actions = ['findMany', 'findUnique'];
   const generated = `
     import { trpc, procedure } from '${relativeTrpcProcedurePath}'
     import * as Schema from "./schema";
-    import { secureClient } from './'
+    import { secureClient } from './';
+
+    export type TrpcPrismaClient = {
+
+      ${options.dmmf.datamodel.models.map(model => {
+    const modelName = toUncapitlize(model.name);
+    return `
+              ${modelName}: {
+              
+                ${actions.map(action => `
+                  ${action}: {
+                    query: ReturnType<typeof secureClient>['${modelName}']['${action}'];
+                  };
+                `).join('')}
+            },
+            `;
+  }).join('\n')}
+    };
 
     export const router = trpc.router({
       ${options.dmmf.datamodel.models.map(model => {
-    const actions = ['findMany', 'findUnique'];
     return `
           ${toUncapitlize(model.name)}: trpc.router({
           

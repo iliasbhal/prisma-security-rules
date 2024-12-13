@@ -2,6 +2,48 @@ import { trpc, procedure } from "../../trpc";
 import * as Schema from "./schema";
 import { secureClient } from "./";
 
+export type TrpcPrismaClient = {
+  users: {
+    findMany: {
+      query: ReturnType<typeof secureClient>["users"]["findMany"];
+    };
+
+    findUnique: {
+      query: ReturnType<typeof secureClient>["users"]["findUnique"];
+    };
+  };
+
+  post: {
+    findMany: {
+      query: ReturnType<typeof secureClient>["post"]["findMany"];
+    };
+
+    findUnique: {
+      query: ReturnType<typeof secureClient>["post"]["findUnique"];
+    };
+  };
+
+  reaction: {
+    findMany: {
+      query: ReturnType<typeof secureClient>["reaction"]["findMany"];
+    };
+
+    findUnique: {
+      query: ReturnType<typeof secureClient>["reaction"]["findUnique"];
+    };
+  };
+
+  mention: {
+    findMany: {
+      query: ReturnType<typeof secureClient>["mention"]["findMany"];
+    };
+
+    findUnique: {
+      query: ReturnType<typeof secureClient>["mention"]["findUnique"];
+    };
+  };
+};
+
 export const router = trpc.router({
   users: trpc.router({
     findMany: procedure

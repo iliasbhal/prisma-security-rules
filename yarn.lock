@@ -3003,7 +3003,7 @@ pretty-format@^29.0.0, pretty-format@^29.7.0:
     react-is "^18.0.0"
 
 "prisma-security-rules@file:":
-  version "0.0.5"
+  version "0.0.6"
   resolved "file:"
   dependencies:
     "@prisma/client" "^6.0.1"
