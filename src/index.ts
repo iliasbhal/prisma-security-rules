@@ -1,4 +1,5 @@
 import { toAwaitedRecord } from './utils/toAwaitedRecord';
+import { PrismaSecureActions } from './lib/_common'
 
 export const withSecurityRules = <Client extends object>(client: Client, rules: Record<string, any>, ctx: Parameters<typeof createQueryGuards>[0]): Client => {
   const guards = createQueryGuards(ctx, rules);
@@ -26,7 +27,7 @@ export const withSecurityRules = <Client extends object>(client: Client, rules: 
                 const modelClient = client[modelName];
 
                 // @ts-ignore
-                const result = await modelClient.findMany(sanitizedArgs);
+                const result = await modelClient[queryName](sanitizedArgs);
                 return result;
               }
             }
@@ -42,23 +43,31 @@ export const withSecurityRules = <Client extends object>(client: Client, rules: 
 }
 
 export const createQueryGuards = <ModelName extends string>(ctx: any, rules: Record<ModelName, any>) => {
-  return {
-    findMany: async (input) => {
-      const modelRules = rules[input.name];
 
-      const additonalRules = await toAwaitedRecord({
-        where: modelRules?.where?.(ctx),
-      })
+  const readQueryModifier = async (input) => {
+    const modelRules = rules[input.name];
 
-      return {
-        ...input.args,
-        where: {
-          AND: [
-            additonalRules.where,
-            input.args.where,
-          ],
-        },
-      };
-    }
+    const additonalRules = await toAwaitedRecord({
+      where: modelRules?.read?.(ctx),
+    })
+
+    return {
+      ...input.args,
+      where: {
+        AND: [
+          additonalRules.where,
+          input.args.where,
+        ],
+      },
+    };
+  };
+
+  const guards: Record<typeof PrismaSecureActions[number], any> = {
+    findFirst: readQueryModifier,
+    findUnique: readQueryModifier,
+    findMany: readQueryModifier,
+    count: readQueryModifier,
   }
+
+  return guards;
 }

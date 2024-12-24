@@ -5,7 +5,7 @@ import { GeneratorOptions } from "@prisma/generator-helper";
 import { writeFileTypescript } from '../utils/writeFileTypescript'
 import { toCapitlize, toUncapitlize } from '../utils/string'
 import { getPaths } from './generatedGuardedPrisma'
-
+import { PrismaSecureActions } from './_common'
 
 export const generateTrpcProcedures = async (options: GeneratorOptions) => {
   const { relativeTrpcProcedurePath, outputFolderPath } = getPaths(options);
@@ -14,9 +14,9 @@ export const generateTrpcProcedures = async (options: GeneratorOptions) => {
     return;
   }
 
-  const actions = ['findMany', 'findUnique'];
   const generated = `
     import { trpc, procedure } from '${relativeTrpcProcedurePath}'
+    import z from 'zod';
     import * as Schema from "./schema";
     import { secureClient } from './';
 
@@ -27,7 +27,7 @@ export const generateTrpcProcedures = async (options: GeneratorOptions) => {
     return `
               ${modelName}: {
               
-                ${actions.map(action => `
+                ${PrismaSecureActions.map(action => `
                   ${action}: {
                     query: ReturnType<typeof secureClient>['${modelName}']['${action}'];
                   };
@@ -42,9 +42,13 @@ export const generateTrpcProcedures = async (options: GeneratorOptions) => {
     return `
           ${toUncapitlize(model.name)}: trpc.router({
           
-            ${actions.map(action => `
+            ${PrismaSecureActions.map(action => `
               ${action}: procedure
-                .input(Schema.${model.name}${toCapitlize(action)}ArgsSchema)
+                ${(action === 'count' ? `
+                  .input(z.object({ where: Schema.${model.name}WhereInputSchema.optional() }))
+                ` : `
+                  .input(Schema.${model.name}${toCapitlize(action)}ArgsSchema)
+                `).trim()}
                 .query(({ ctx, input }) => secureClient(ctx).${toUncapitlize(model.name)}.${action}(input)),
             `).join('')}
         }),
