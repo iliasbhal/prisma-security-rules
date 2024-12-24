@@ -16,7 +16,12 @@ export type ModelName = Capitalize<
 >;
 export type WhereRule<Name extends ModelName> = (
   ctx: Context,
+  arg: z.infer<(typeof Schema)[`${Name}WhereInputSchema`]>,
 ) => z.infer<(typeof Schema)[`${Name}WhereInputSchema`]>;
+export type WriteRule<Name extends ModelName> = (
+  ctx: Context,
+  arg: z.infer<(typeof Schema)[`${Name}CreateArgsSchema`]>["data"],
+) => z.infer<(typeof Schema)[`${Name}CreateArgsSchema`]>["data"];
 
 export const secureClient = (ctx: Context) => {
   return withSecurityRules(prisma, rules, ctx);

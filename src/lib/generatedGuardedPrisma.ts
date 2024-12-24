@@ -54,7 +54,8 @@ export const generateGuardedPrisma = async (options: GeneratorOptions) => {
     export * as Schema from './schema';
 
     ${'export type ModelName = Capitalize<Exclude<keyof typeof prisma, `$${ string }` | symbol | number>>;'}
-    ${'export type WhereRule<Name extends ModelName> = (ctx: Context) => z.infer<typeof Schema[`${ Name }WhereInputSchema`]>'}
+    ${'export type WhereRule<Name extends ModelName> = (ctx: Context, arg: z.infer<typeof Schema[`${ Name }WhereInputSchema`]>) => z.infer<typeof Schema[`${ Name }WhereInputSchema`]>'}
+    ${'export type WriteRule<Name extends ModelName> = (ctx: Context, arg: z.infer<typeof Schema[`${ Name }CreateArgsSchema`]>[\'data\']) => z.infer<typeof Schema[`${ Name }CreateArgsSchema`]>[\'data\']'}
 
     export const secureClient = (ctx: Context) => {
       return withSecurityRules(prisma, rules, ctx)

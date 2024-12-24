@@ -46,9 +46,13 @@ export const createQueryGuards = <ModelName extends string>(ctx: any, rules: Rec
 
   const readQueryModifier = async (input) => {
     const modelRules = rules[input.name];
+    if (!modelRules?.read) {
+      throw new Error('No read rules defined');
+    }
+
 
     const additonalRules = await toAwaitedRecord({
-      where: modelRules?.read?.(ctx),
+      where: modelRules?.read?.(ctx, input.args.where),
     })
 
     return {
@@ -62,11 +66,33 @@ export const createQueryGuards = <ModelName extends string>(ctx: any, rules: Rec
     };
   };
 
+  const writeQueryModifier = async (input) => {
+    const modelRules = rules[input.name];
+    if (!modelRules?.write) {
+      throw new Error('No write rules defined');
+    }
+
+    const additonalRules = await toAwaitedRecord({
+      data: modelRules?.write?.(ctx, input.args.data),
+    })
+
+    return {
+      ...input.args,
+      data: {
+        ...additonalRules.data,
+        ...input.args.data,
+      },
+    };
+
+  }
+
   const guards: Record<typeof PrismaSecureActions[number], any> = {
     findFirst: readQueryModifier,
     findUnique: readQueryModifier,
     findMany: readQueryModifier,
     count: readQueryModifier,
+
+    create: writeQueryModifier,
   }
 
   return guards;

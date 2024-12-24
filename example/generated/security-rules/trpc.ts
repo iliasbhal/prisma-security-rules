@@ -20,6 +20,10 @@ export type TrpcPrismaClient = {
     count: {
       query: ReturnType<typeof secureClient>["users"]["count"];
     };
+
+    create: {
+      query: ReturnType<typeof secureClient>["users"]["create"];
+    };
   };
 
   post: {
@@ -37,6 +41,10 @@ export type TrpcPrismaClient = {
 
     count: {
       query: ReturnType<typeof secureClient>["post"]["count"];
+    };
+
+    create: {
+      query: ReturnType<typeof secureClient>["post"]["create"];
     };
   };
 
@@ -56,6 +64,10 @@ export type TrpcPrismaClient = {
     count: {
       query: ReturnType<typeof secureClient>["reaction"]["count"];
     };
+
+    create: {
+      query: ReturnType<typeof secureClient>["reaction"]["create"];
+    };
   };
 
   mention: {
@@ -73,6 +85,10 @@ export type TrpcPrismaClient = {
 
     count: {
       query: ReturnType<typeof secureClient>["mention"]["count"];
+    };
+
+    create: {
+      query: ReturnType<typeof secureClient>["mention"]["create"];
     };
   };
 };
@@ -94,6 +110,10 @@ export const router = trpc.router({
     count: procedure
       .input(z.object({ where: Schema.UsersWhereInputSchema.optional() }))
       .query(({ ctx, input }) => secureClient(ctx).users.count(input)),
+
+    create: procedure
+      .input(Schema.UsersCreateArgsSchema)
+      .query(({ ctx, input }) => secureClient(ctx).users.create(input)),
   }),
 
   post: trpc.router({
@@ -112,6 +132,10 @@ export const router = trpc.router({
     count: procedure
       .input(z.object({ where: Schema.PostWhereInputSchema.optional() }))
       .query(({ ctx, input }) => secureClient(ctx).post.count(input)),
+
+    create: procedure
+      .input(Schema.PostCreateArgsSchema)
+      .query(({ ctx, input }) => secureClient(ctx).post.create(input)),
   }),
 
   reaction: trpc.router({
@@ -130,6 +154,10 @@ export const router = trpc.router({
     count: procedure
       .input(z.object({ where: Schema.ReactionWhereInputSchema.optional() }))
       .query(({ ctx, input }) => secureClient(ctx).reaction.count(input)),
+
+    create: procedure
+      .input(Schema.ReactionCreateArgsSchema)
+      .query(({ ctx, input }) => secureClient(ctx).reaction.create(input)),
   }),
 
   mention: trpc.router({
@@ -148,5 +176,9 @@ export const router = trpc.router({
     count: procedure
       .input(z.object({ where: Schema.MentionWhereInputSchema.optional() }))
       .query(({ ctx, input }) => secureClient(ctx).mention.count(input)),
+
+    create: procedure
+      .input(Schema.MentionCreateArgsSchema)
+      .query(({ ctx, input }) => secureClient(ctx).mention.create(input)),
   }),
 });

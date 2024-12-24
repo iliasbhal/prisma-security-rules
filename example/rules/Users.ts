@@ -1,9 +1,9 @@
-import type { WhereRule } from "../generated/security-rules";
+import type { WhereRule, WriteRule } from "../generated/security-rules";
 
-export const read: WhereRule<"Users"> = (ctx) => {
+export const read: WhereRule<"Users"> = (ctx, data) => {
   throw new Error("Not Allowed");
 };
 
-export const write: WhereRule<"Users"> = (ctx) => {
+export const write: WriteRule<"Users"> = (ctx, data) => {
   throw new Error("Not Allowed");
 }

@@ -8,8 +8,10 @@ export const PrismaSecureActions = [
   // 'aggregate',
 
   // Write
+  'create',
+
   // 'update',
-  // 'create',
-  // 'delete',
   // 'upsert',
+
+  // 'delete',
 ] as const;

@@ -21,11 +21,11 @@ export const generateRuleFiles = async (options: GeneratorOptions) => {
       await writeFileTypescript(modelRulesPath, `
         import type { WhereRule } from '${importPath}';
 
-        export const read: WhereRule<'${model.name}'> = (ctx) => {
+        export const read: WhereRule<'${model.name}'> = (ctx, where) => {
           throw new Error('Not Allowed');
         };
 
-        export const write: WhereRule<'${model.name}'> = (ctx) => {
+        export const write: WriteRule<'${model.name}'> = (ctx, data) => {
           throw new Error('Not Allowed');
         };
       `)
