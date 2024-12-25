@@ -24,6 +24,10 @@ export type TrpcPrismaClient = {
     create: {
       query: ReturnType<typeof secureClient>["users"]["create"];
     };
+
+    update: {
+      query: ReturnType<typeof secureClient>["users"]["update"];
+    };
   };
 
   post: {
@@ -45,6 +49,10 @@ export type TrpcPrismaClient = {
 
     create: {
       query: ReturnType<typeof secureClient>["post"]["create"];
+    };
+
+    update: {
+      query: ReturnType<typeof secureClient>["post"]["update"];
     };
   };
 
@@ -68,6 +76,10 @@ export type TrpcPrismaClient = {
     create: {
       query: ReturnType<typeof secureClient>["reaction"]["create"];
     };
+
+    update: {
+      query: ReturnType<typeof secureClient>["reaction"]["update"];
+    };
   };
 
   mention: {
@@ -89,6 +101,10 @@ export type TrpcPrismaClient = {
 
     create: {
       query: ReturnType<typeof secureClient>["mention"]["create"];
+    };
+
+    update: {
+      query: ReturnType<typeof secureClient>["mention"]["update"];
     };
   };
 };
@@ -114,6 +130,10 @@ export const router = trpc.router({
     create: procedure
       .input(Schema.UsersCreateArgsSchema)
       .query(({ ctx, input }) => secureClient(ctx).users.create(input)),
+
+    update: procedure
+      .input(Schema.UsersUpdateArgsSchema)
+      .query(({ ctx, input }) => secureClient(ctx).users.update(input)),
   }),
 
   post: trpc.router({
@@ -136,6 +156,10 @@ export const router = trpc.router({
     create: procedure
       .input(Schema.PostCreateArgsSchema)
       .query(({ ctx, input }) => secureClient(ctx).post.create(input)),
+
+    update: procedure
+      .input(Schema.PostUpdateArgsSchema)
+      .query(({ ctx, input }) => secureClient(ctx).post.update(input)),
   }),
 
   reaction: trpc.router({
@@ -158,6 +182,10 @@ export const router = trpc.router({
     create: procedure
       .input(Schema.ReactionCreateArgsSchema)
       .query(({ ctx, input }) => secureClient(ctx).reaction.create(input)),
+
+    update: procedure
+      .input(Schema.ReactionUpdateArgsSchema)
+      .query(({ ctx, input }) => secureClient(ctx).reaction.update(input)),
   }),
 
   mention: trpc.router({
@@ -180,5 +208,9 @@ export const router = trpc.router({
     create: procedure
       .input(Schema.MentionCreateArgsSchema)
       .query(({ ctx, input }) => secureClient(ctx).mention.create(input)),
+
+    update: procedure
+      .input(Schema.MentionUpdateArgsSchema)
+      .query(({ ctx, input }) => secureClient(ctx).mention.update(input)),
   }),
 });

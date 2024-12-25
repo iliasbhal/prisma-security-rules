@@ -187,6 +187,7 @@ describe('General', () => {
     }
 
     const secureClient = withSecurityRules(client, {}, context);
+
     await expect(() => secureClient.user.findMany({ where: { userId: '123' } })).rejects.toThrow('No read rules defined')
     await expect(() => secureClient.user.create({ data: { userId: '123' } })).rejects.toThrow('No write rules defined')
   })
@@ -211,6 +212,57 @@ describe('General', () => {
     const secureClient = withSecurityRules(client, rules, context);
     await expect(() => secureClient.user.create({ where: { userId: '123' } })).rejects.toThrow('HAHAHAH Not Allowed')
     expect(client.user.create).not.toHaveBeenCalled();
+  })
+
+  it('should check read write for update queries', async () => {
+    const client = createMockPrismaClient();
+
+    const context = {
+      user: {
+        id: '123'
+      }
+    }
+
+    const rules = {
+      user: {
+        read: async (ctx: typeof context, where) => {
+          return {
+            id: ctx.user.id
+          }
+        },
+        write: async (ctx: typeof context, data) => {
+          return {
+            created_by: ctx.user.id,
+          }
+        }
+      }
+    }
+
+    await withSecurityRules(client, rules, context).user.update({
+      where: {
+        userId: '123'
+      },
+      data: {
+        id: 99999,
+      }
+    });
+
+    expect(client.user.update).toHaveBeenCalledWith({
+      where: {
+        AND: [
+          {
+            id: '123'
+          },
+          {
+            userId: '123'
+          }
+        ]
+      },
+      data: {
+        created_by: '123',
+        id: 99999,
+      }
+    })
   })
 });
 

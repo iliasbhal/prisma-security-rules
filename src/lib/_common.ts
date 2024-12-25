@@ -10,8 +10,14 @@ export const PrismaSecureActions = [
   // Write
   'create',
 
-  // 'update',
+  'update',
+
   // 'upsert',
+  // For `upsert` we need to make sure that the 
+  // query won't create a new entry in the database
+  // The schema should enforce a unique constraint
+  // to ensure that no matter what .where is provided
+  // no new row will be created 
 
   // 'delete',
 ] as const;
